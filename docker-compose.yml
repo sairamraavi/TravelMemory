@@ -1,0 +1,42 @@
+services:
+  frontend:
+    build: ./frontend
+    container_name: tm_frontend
+    ports:
+      - "80:80"
+    environment:
+      REACT_APP_BACKEND_URL: "http://backend:3001"
+    depends_on:
+      - backend
+    networks:
+      - b16a_tm_network
+
+  backend:
+    build: ./backend
+    container_name: tm_backend
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      MONGO_URI: "mongodb://tm_database:27017/travelmemory"
+    depends_on:
+      - database
+    networks:
+      - b16a_tm_network
+
+  database:
+    image: mongo:latest
+    container_name: tm_database
+    ports:
+      - "27019:27017"
+    networks:
+      - b16a_tm_network
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
+
+networks:
+  b16a_tm_network:
+    driver: bridge
